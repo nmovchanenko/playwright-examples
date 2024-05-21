@@ -18,13 +18,13 @@ test.describe('add to cart scenarios', () => {
     await page.goto('https://cloudtesting.contosotraders.com/')
   });
 
-  test('add to cart from carousel', async ({ page }) => {
+  test('<C1234> add to cart from carousel', async ({ page }) => {
     await page.getByRole('button', { name: 'Buy Now' }).click();
     await addAndViewCart(page);
     await expect(page.getByText('Xbox Wireless Controller Lunar Shift Special Edition')).toBeVisible();
   });
 
-  test('add to cart from search', async ({ page }) => {
+  test('<C232434> add to cart from search', async ({ page }) => {
     const product = 'Xbox Wireless Controller Mineral Camo Special Edition'
     const placeholder = page.getByPlaceholder('Search by product name or search by image')
     await placeholder.click();
@@ -35,7 +35,7 @@ test.describe('add to cart scenarios', () => {
     await expect(page.getByText(product)).toBeVisible();
   });
 
-  test('add to cart from all products page', async ({ page }) => {
+  test('<C3232> add to cart from all products page', async ({ page }) => {
     const product = 'Xbox Wireless Controller Lunar Shift Special Edition'
     await page.getByRole('link', { name: 'All Products' }).first().click();
     await page.getByRole('img', { name: product }).click();
@@ -43,7 +43,7 @@ test.describe('add to cart scenarios', () => {
     await expect(page.getByText(product)).toBeVisible();
   });
 
-  test('add to cart from laptops page', async ({ page }) => {
+  test('<9832> add to cart from laptops page', async ({ page }) => {
     const product = 'Microsoft Surface Pro X 1876 13 Inches Laptop'
     await page.getByRole('link', { name: 'Laptops' }).first().click();
     await page.getByRole('img', { name:  product}).click();
