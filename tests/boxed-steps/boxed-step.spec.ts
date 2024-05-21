@@ -43,7 +43,7 @@ test.describe('add to cart scenarios', () => {
     await expect(page.getByText(product)).toBeVisible();
   });
 
-  test('<9832> add to cart from laptops page', async ({ page }) => {
+  test('<C9832> add to cart from laptops page', async ({ page }) => {
     const product = 'Microsoft Surface Pro X 1876 13 Inches Laptop'
     await page.getByRole('link', { name: 'Laptops' }).first().click();
     await page.getByRole('img', { name:  product}).click();
