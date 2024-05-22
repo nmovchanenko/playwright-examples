@@ -11,7 +11,7 @@ jobs:
         shell: bash
         run: |
           ls
-          grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//'
+          grep -r '<.*>' tests/ | sed 's/.*<//; s/>.*//'
           
 
   # test:
