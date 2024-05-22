@@ -10,8 +10,8 @@ jobs:
       - name: Find test rail ids
         shell: bash
         run: |
-          pwd
-          grep -r '<.*>' tests/ | sed 's/.*<//; s/>.*//'
+          ls -l
+          grep -r '<.*>' tests | sed 's/.*<//; s/>.*//'
           
 
   # test:
