@@ -23,7 +23,7 @@ jobs:
     - name: Find test rail ids
       id: spec_list
       run: |
-        grep -r '<.*>' tests | sed 's/.*<//; s/>.*//' >> $GITHUB_OUTPUT
+        grep -r '<.*>' tests | sed 's/.*<//; s/>.*//'
 
     - name: Test output
       run: |
