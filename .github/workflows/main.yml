@@ -4,6 +4,15 @@ on:
   workflow_dispatch:
 
 jobs:
+  find_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find test rail ids
+        shell: bash
+        run: |
+          grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//
+          
+
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
