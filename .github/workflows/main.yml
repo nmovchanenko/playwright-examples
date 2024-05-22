@@ -26,9 +26,12 @@ jobs:
         grep -r '<.*>' tests | sed 's/.*<//; s/>.*//'
 
     - name: Test output
+      shell: bash
       run: |
         # Capture the grep output
         output=$(grep -r '<.*>' tests | sed 's/.*<//; s/>.*//')
+        
+        echo "$output"
         
         # Split the output into lines (considering odd number of lines)
         lines=( $(echo "$output" | tr '\n' ' ') )
@@ -52,7 +55,9 @@ jobs:
         # Print the arrays (adjust indentation for readability)
         echo "Array 1:"
         printf '%s\n' "${array1[@]}"
-        
+
+        echo "$array1"
+
         echo "Array 2:"
         printf '%s\n' "${array2[@]}"
 
