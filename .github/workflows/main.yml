@@ -23,7 +23,7 @@ jobs:
     - name: Log output
       shell: bash
       run: |
-        echo ${{ env.TR_IDS }}
+        echo "${{ env.TR_IDS }}"
 
     - name: Install dependencies
       run: npm ci
