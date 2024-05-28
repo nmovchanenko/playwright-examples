@@ -18,15 +18,12 @@ jobs:
       id: tr_id
       shell: bash
       run: |
-#        output=$(grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')
-#        echo "::set-output name=GREP_RESULT::$output"
         echo "TR_IDS=$(grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')" >> $GITHUB_ENV
 
     - name: Log output
       shell: bash
       run: |
         echo ${{ env.TR_IDS }}
-#        echo "The grep result is: ${{ steps.tr_id.outputs.GREP_RESULT }}"
 
 #    - name: Install dependencies
 #      run: npm ci
