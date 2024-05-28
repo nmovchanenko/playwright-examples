@@ -29,10 +29,10 @@ jobs:
       run: npm ci
 
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: npx playwright install chromium
 
     - name: Run Playwright tests
-      run: npx playwright test ${{ env.TR_IDS }}
+      run: npx playwright test "${{ env.TR_IDS }}"
     - uses: actions/upload-artifact@v4
       if: always()
       with:
