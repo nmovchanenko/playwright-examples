@@ -18,7 +18,7 @@ jobs:
       id: tr_id
       shell: bash
       run: |
-        echo "TR_IDS=$(grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' ' ')" >> $GITHUB_ENV
+        echo "TR_IDS=$(grep -r '<C.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' ' ')" >> $GITHUB_ENV
 
     - name: Log output
       shell: bash
