@@ -4,23 +4,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  find_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Find test rail ids
-        shell: bash
-        run: |
-          grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//
-          
-
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
     - uses: actions/setup-node@v4
       with:
         node-version: 18
+
+    - name: Find test rail ids
+      shell: bash
+      run: |
+        grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//
+
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
