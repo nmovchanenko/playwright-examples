@@ -1,0 +1,93 @@
+name: Run Playwright Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_tag:
+        description: "Test scope to run"
+        required: true
+        type: choice
+        default: "@smoke"
+        options:
+          - "@smoke"
+          - "@regression"
+
+      max_parallel:
+        description: "Max parallel tests to run"
+        required: true
+        type: string
+        default: "5"
+
+  repository_dispatch:
+    types:
+      - RunMonolithTests/*
+
+env:
+  MAX_PARALLEL: ${{ inputs.max_parallel}}
+  TEST_TAG: ${{ inputs.test_tag }}
+
+jobs:
+  setup:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print
+        run: env | sort
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        if: ${{ env.NEXT_TESTS }}
+        with:
+          node-version: 18
+
+      - name: Install Playwright Browsers
+        if: ${{ env.NEXT_TESTS }}
+        run: |
+          TEST_TAG="${{ env.TEST_TAG }}" \
+          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
+          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
+          REPO_OWNER=${{ github.repository_owner }} \
+          REPO_NAME=${{ github.repository }} \
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          node ./index.js
+
+      - name: Event Information
+        if: ${{ github.event_name == 'repository_dispatch'}}
+        run: |
+          echo "Next tests: ${{ github.event.client_payload.nextTests }}, Left tests: ${{ github.event.client_payload.leftTests }}, Need to stop: ${{ github.event.client_payload.stop }}"
+          echo "NEXT_TESTS=${{ github.event.client_payload.nextTests }}" >> $GITHUB_ENV
+          echo "LEFT_TESTS=${{ github.event.client_payload.leftTests }}" >> $GITHUB_ENV
+          echo "TEST_TAG=${{ github.event.client_payload.testTag }}" >> $GITHUB_ENV
+          echo "MAX_PARALLEL=${{ github.event.client_payload.maxParallel }}" >> $GITHUB_ENV
+          echo "STOP=${{ github.event.client_payload.stop }}" >> $GITHUB_ENV
+
+#      - name: Echo Env if next tests not empty
+#        if: ${{ env.NEXT_TESTS }}
+#        run: |
+#          echo "${{ env.NEXT_TESTS }}"
+#          echo "${{ env.LEFT_TESTS }}"
+#          echo "${{ env.TEST_TAG }}"
+#          echo "${{ env.STOP }}"
+#
+#      - name: Install dependencies
+#        if: ${{ env.NEXT_TESTS }}
+#        run: npm ci
+#
+#      - name: Install Playwright Browsers
+#        if: ${{ env.NEXT_TESTS }}
+#        run: npx playwright install chromium
+#
+#      - name: Run Playwright tests
+#        if: ${{ env.NEXT_TESTS }}
+#        run: |
+#          TEST_TAG="${{ env.TEST_TAG }}" \
+#          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
+#          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+#          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
+#          REPO_OWNER=${{ github.repository_owner }} \
+#          REPO_NAME=${{ github.repository }} \
+#          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+#          npx playwright test -g "${{ env.NEXT_TESTS }}"
+
