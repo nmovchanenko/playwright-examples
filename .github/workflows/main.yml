@@ -31,7 +31,7 @@ jobs:
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
-          echo "Event '${{ github.event.action }}' received. Passed: ${{ github.event.client_payload.passed }}, failed: '${{ github.event.client_payload.failed }}'"
+          echo "Event '${{ github.event.action }}' received. CURRENT: ${{ github.event.client_payload.current }}, NEXT: '${{ github.event.client_payload.next }}'"
           echo "STOP=true" >> $GITHUB_ENV
 
       - name: Install dependencies
