@@ -2,25 +2,26 @@ import {expect, test} from "@playwright/test";
 
 test('repo dispatch', async ({ request }) => {
     const {
-        CURRENT_TESTS,
+        MAX_PARALLEL,
+        LEFT_TESTS,
         NEXT_TESTS,
         REPO_OWNER,
         REPO_NAME,
         GITHUB_TOKEN,
     } = process.env;
 
+    console.log('Max parallel:');
+    console.log(MAX_PARALLEL);
     console.log('current tests:');
-    console.log(CURRENT_TESTS);
-    console.log('next tests to run:');
     console.log(NEXT_TESTS);
-
-    const limit = 3;
+    console.log('left tests to run:');
+    console.log(LEFT_TESTS);
 
     const testsToRunNext = [];
     const otherTestsToRun = [];
 
-    NEXT_TESTS.split('|').forEach((testId, index) => {
-        if (index < limit) {
+    LEFT_TESTS.split('|').forEach((testId, index) => {
+        if (index < Number(MAX_PARALLEL)) {
             testsToRunNext.push(testId);
         } else {
             otherTestsToRun.push(testId);

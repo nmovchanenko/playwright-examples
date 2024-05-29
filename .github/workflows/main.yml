@@ -2,9 +2,30 @@ name: Run Playwright Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      test_scope:
+        description: "Test scope to run"
+        required: true
+        type: choice
+        default: "@smoke"
+        options:
+          - "@deployment-criteria"
+          - "@smoke"
+          - "@regression"
+
+      max_parallel:
+        description: "Max parallel tests to run"
+        required: true
+        type: string
+        default: "5"
+
   repository_dispatch:
     types:
       - RunMonolithTests/*
+
+env:
+  MAX_PARALLEL: ${{ inputs.max_parallel || '5' }}
+  TEST_SCOPE: ${{ inputs.test_scope || '@deployment-criteria'}}
 
 jobs:
   setup:
@@ -21,19 +42,21 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          echo "NEXT_TESTS=$(grep -r '<U.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
-          echo "CURRENT_TESTS=A0001|A0002" >> $GITHUB_ENV
+          echo "LEFT_TESTS=$(grep -r '<U.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
+          echo "NEXT_TESTS=A0001|A0002" >> $GITHUB_ENV
 
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
           echo "Next tests: ${{ github.event.client_payload.nextTests }}, Left tests: '${{ github.event.client_payload.leftTests }}', Need to stop: '${{ github.event.client_payload.stop }}'"
+          echo "NEXT_TESTS=github.event.client_payload.nextTests" >> $GITHUB_ENV
+          echo "LEFT_TESTS=github.event.client_payload.leftTests" >> $GITHUB_ENV
           echo "STOP=github.event.client_payload.stop" >> $GITHUB_ENV
 
       - name: Echo Env
         run: |
           echo "${{ env.NEXT_TESTS }}"
-          echo "${{ env.CURRENT_TESTS }}"
+          echo "${{ env.LEFT_TESTS }}"
           echo "${{ env.STOP }}"
 
       - uses: actions/setup-node@v4
@@ -47,13 +70,15 @@ jobs:
         run: npx playwright install chromium
 
       - name: Run Playwright tests
+        if: ${{ env.NEXT_TESTS }}
         run: |
-          CURRENT_TESTS="${{ env.CURRENT_TESTS }}" \
+          MAX_PARALLEL="${{ env.MAX_PARALLEL }}"
           NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
           REPO_OWNER=${{ github.repository_owner }} \
           REPO_NAME=${{ github.repository }} \
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-          npx playwright test -g "${{ env.CURRENT_TESTS }}"
+          npx playwright test -g "${{ env.NEXT_TESTS }}"
 
       - uses: actions/upload-artifact@v4
         if: always()
