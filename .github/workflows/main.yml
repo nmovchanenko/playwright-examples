@@ -35,6 +35,10 @@ jobs:
     needs: setup
     if: needs.setup.outputs.STOP != 'true'
     steps:
+      - name: Echo Env
+        run: |
+          echo "${{env}}"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -49,6 +53,7 @@ jobs:
 
       - name: Run Playwright tests
         run: |
+          CURRENT_TESTS="${{ env.CURRENT_TESTS }}" \
           NEXT_TESTS="${{ env.NEXT_TESTS }}" \
           REPO_OWNER=${{ github.repository_owner }} \
           REPO_NAME=${{ github.repository }} \
