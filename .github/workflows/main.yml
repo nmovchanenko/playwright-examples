@@ -22,6 +22,10 @@ on:
     types:
       - RunMonolithTests/*
 
+env:
+  MAX_PARALLEL: ${{ inputs.max_parallel}}
+  TEST_TAG: ${{ inputs.test_tag }}
+
 jobs:
   setup:
     timeout-minutes: 60
