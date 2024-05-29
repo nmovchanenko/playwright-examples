@@ -16,10 +16,6 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
       - name: Find test rail ids
         if: ${{ github.event_name == 'workflow_dispatch'}}
         id: tr_id
@@ -34,12 +30,24 @@ jobs:
           echo "Event '${{ github.event.action }}' received. CURRENT: ${{ github.event.client_payload.current }}, NEXT: '${{ github.event.client_payload.next }}'"
           echo "STOP=true" >> $GITHUB_ENV
 
+
+  run_playwright:
+    runs-on: ubuntu-latest
+    if: ${{ env.STOP != 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
       - name: Install dependencies
         run: npm ci
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium
+
       - name: Run Playwright tests
-        if: ${{ env.STOP != 'true' }}
         run: |
           NEXT_TESTS="${{ env.NEXT_TESTS }}" \
           REPO_OWNER=${{ github.repository_owner }} \
