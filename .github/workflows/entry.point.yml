@@ -1,4 +1,4 @@
-name: Run Playwright Tests
+name: Run Entry Point
 
 on:
   workflow_dispatch:
