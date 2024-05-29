@@ -54,6 +54,7 @@ jobs:
           echo "STOP=github.event.client_payload.stop" >> $GITHUB_ENV
 
       - name: Echo Env
+        if: ${{ env.NEXT_TESTS }}
         run: |
           echo "${{ env.NEXT_TESTS }}"
           echo "${{ env.LEFT_TESTS }}"
