@@ -2,6 +2,7 @@ import {expect, test} from "@playwright/test";
 
 test('repo dispatch', async ({ request }) => {
     const {
+        TEST_TAG,
         MAX_PARALLEL,
         LEFT_TESTS,
         NEXT_TESTS,
@@ -36,6 +37,8 @@ test('repo dispatch', async ({ request }) => {
         data: {
             event_type: "RunMonolithTests/next",
             client_payload: {
+                maxParallel: MAX_PARALLEL,
+                testTag: TEST_TAG,
                 nextTests: testsToRunNext.join('|'),
                 leftTests: otherTestsToRun.join('|'),
                 stop: testsToRunNext.length === 0
