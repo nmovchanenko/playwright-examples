@@ -31,13 +31,12 @@ jobs:
         if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
           echo "Event '${{ github.event.action }}' received. CURRENT: ${{ github.event.client_payload.current }}, NEXT: '${{ github.event.client_payload.next }}'"
-          echo "STOP=true" >> $GITHUB_ENV
-
+          echo "STOP=true" >> $GITHUB_OUTPUT
 
   run_playwright:
     runs-on: ubuntu-latest
     needs: setup
-    if: ${{ env.STOP != 'true' }}
+    if: needs.setup.outputs.STOP != 'true'
     steps:
       - uses: actions/checkout@v4
 
