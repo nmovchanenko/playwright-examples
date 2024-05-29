@@ -74,8 +74,8 @@ jobs:
         if: ${{ env.NEXT_TESTS }}
         run: |
           MAX_PARALLEL=${{ env.MAX_PARALLEL }}
-          NEXT_TESTS=${{ env.NEXT_TESTS }} \
-          LEFT_TESTS=${{ env.LEFT_TESTS }} \
+          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
           REPO_OWNER=${{ github.repository_owner }} \
           REPO_NAME=${{ github.repository }} \
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
