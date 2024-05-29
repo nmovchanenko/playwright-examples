@@ -74,8 +74,8 @@ jobs:
       - name: Run Playwright tests
         if: ${{ env.NEXT_TESTS }}
         run: |
-          TEST_TAG=${{ env.TEST_TAG }} \
-          MAX_PARALLEL=${{ env.MAX_PARALLEL }}
+          TEST_TAG="${{ env.TEST_TAG }}" \
+          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
           NEXT_TESTS="${{ env.NEXT_TESTS }}" \
           LEFT_TESTS="${{ env.LEFT_TESTS }}" \
           REPO_OWNER=${{ github.repository_owner }} \
