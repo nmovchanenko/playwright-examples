@@ -6,9 +6,6 @@ on:
     types:
       - RunMonolithTests/*
 
-env:
-  STOP: false
-
 jobs:
   setup:
     timeout-minutes: 60

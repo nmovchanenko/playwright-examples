@@ -2,12 +2,15 @@ import {expect, test} from "@playwright/test";
 
 test('repo dispatch', async ({ request }) => {
     const {
+        CURRENT_TESTS,
         NEXT_TESTS,
         REPO_OWNER,
         REPO_NAME,
         GITHUB_TOKEN,
     } = process.env;
 
+    console.log('current tests:');
+    console.log(CURRENT_TESTS);
     console.log('next tests to run:');
     console.log(NEXT_TESTS);
 
@@ -20,7 +23,7 @@ test('repo dispatch', async ({ request }) => {
             event_type: "RunMonolithTests/next",
             client_payload: {
                 current: 9,
-                next: NEXT_TESTS
+                next: `${NEXT_TESTS}`
             }
         }
     };
@@ -32,9 +35,9 @@ test('repo dispatch', async ({ request }) => {
     const [owner, repo] = REPO_NAME.split('/');
     const dispatchUrl = `https://api.github.com/repos/${owner}/${repo}/dispatches`;
 
-    console.log(`Dispatching ${dispatchUrl} with payload`, payload);
+    console.log(`Dispatching ${dispatchUrl} with payload`, JSON.stringify(payload, null, 2));
 
-    const res = await request.post(dispatchUrl, payload);
+    // const res = await request.post(dispatchUrl, payload);
 
     return res.status;
 });
