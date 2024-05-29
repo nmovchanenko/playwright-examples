@@ -24,7 +24,7 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          echo "TR_IDS=$(grep -r '<C.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
+          echo "TR_IDS=$(grep -r '<U.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
 
       - name: Event Information
         run: |
