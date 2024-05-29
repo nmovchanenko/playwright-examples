@@ -79,7 +79,7 @@ jobs:
           REPO_OWNER=${{ github.repository_owner }} \
           REPO_NAME=${{ github.repository }} \
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-          npx playwright test -g ${{ env.NEXT_TESTS }}
+          npx playwright test -g "${{ env.NEXT_TESTS }}"
 
       - uses: actions/upload-artifact@v4
         if: always()
