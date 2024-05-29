@@ -21,21 +21,31 @@ jobs:
           node-version: 18
 
       - name: Find test rail ids
+        if: ${{ github.event_name == 'workflow_dispatch'}}
         id: tr_id
         shell: bash
         run: |
-          echo "TR_IDS=$(grep -r '<U.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
+          echo "NEXT_TESTS=$(grep -r '<U.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
+          echo "CURRENT_TESTS=A0001|A0002" >> $GITHUB_ENV
 
       - name: Event Information
+        if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
           echo "Event '${{ github.event.action }}' received. Passed: ${{ github.event.client_payload.passed }}, failed: '${{ github.event.client_payload.failed }}'"
+          echo "STOP=true" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install chromium
       - name: Run Playwright tests
-        run: NEXT_TESTS="${{ env.TR_IDS }}" REPO_OWNER=${{ github.repository_owner }} REPO_NAME=${{ github.repository }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx playwright test -g "${{ env.TR_IDS }}"
+        if: ${{ env.STOP != 'true' }}
+        run: |
+          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+          REPO_OWNER=${{ github.repository_owner }} \
+          REPO_NAME=${{ github.repository }} \
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          npx playwright test -g "${{ env.CURRENT_TESTS }}"
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -19,8 +19,8 @@ test('repo dispatch', async ({ request }) => {
         data: {
             event_type: "RunMonolithTests/next",
             client_payload: {
-                passed: 9,
-                failed: 1
+                current: 9,
+                next: NEXT_TESTS
             }
         }
     };
