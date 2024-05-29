@@ -39,5 +39,5 @@ test('repo dispatch', async ({ request }) => {
 
     // const res = await request.post(dispatchUrl, payload);
 
-    return res.status;
+    // return res.status;
 });
