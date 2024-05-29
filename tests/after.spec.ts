@@ -29,33 +29,35 @@ test('repo dispatch', async ({ request }) => {
         }
     })
 
-    let payload = {
-        headers: {
-            Authorization: `Bearer ${GITHUB_TOKEN}`,
-            Accept: "application/vnd.github.v3+json"
-        },
-        data: {
-            event_type: "RunMonolithTests/next",
-            client_payload: {
-                maxParallel: MAX_PARALLEL,
-                testTag: TEST_TAG,
-                nextTests: testsToRunNext.join('|'),
-                leftTests: otherTestsToRun.join('|'),
-                stop: testsToRunNext.length === 0
+    if (testsToRunNext.length) {
+        let payload = {
+            headers: {
+                Authorization: `Bearer ${GITHUB_TOKEN}`,
+                Accept: "application/vnd.github.v3+json"
+            },
+            data: {
+                event_type: "RunMonolithTests/next",
+                client_payload: {
+                    maxParallel: MAX_PARALLEL,
+                    testTag: TEST_TAG,
+                    nextTests: testsToRunNext.join('|'),
+                    leftTests: otherTestsToRun.join('|'),
+                    stop: testsToRunNext.length === 0
+                }
             }
+        };
+
+        if(!REPO_OWNER || !REPO_NAME || !GITHUB_TOKEN) {
+            throw new Error('Owner and repo required');
         }
-    };
 
-    if(!REPO_OWNER || !REPO_NAME || !GITHUB_TOKEN) {
-        throw new Error('Owner and repo required');
+        const [owner, repo] = REPO_NAME.split('/');
+        const dispatchUrl = `https://api.github.com/repos/${owner}/${repo}/dispatches`;
+
+        console.log(`Dispatching ${dispatchUrl} with payload`, JSON.stringify(payload, null, 2));
+
+        const res = await request.post(dispatchUrl, payload);
+
+        return res.status;
     }
-
-    const [owner, repo] = REPO_NAME.split('/');
-    const dispatchUrl = `https://api.github.com/repos/${owner}/${repo}/dispatches`;
-
-    console.log(`Dispatching ${dispatchUrl} with payload`, JSON.stringify(payload, null, 2));
-
-    const res = await request.post(dispatchUrl, payload);
-
-    return res.status;
 });
