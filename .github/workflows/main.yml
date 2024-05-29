@@ -2,40 +2,44 @@ name: Run Playwright Tests
 
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types:
+      - RunMonolithTests/*
 
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Print
+        run: env | sort
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
+      - uses: actions/checkout@v4
 
-    - name: Find test rail ids
-      id: tr_id
-      shell: bash
-      run: |
-        echo "TR_IDS=$(grep -r '<C.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-    - name: Log output
-      shell: bash
-      run: |
-        echo "${{ env.TR_IDS }}"
+      - name: Find test rail ids
+        id: tr_id
+        shell: bash
+        run: |
+          echo "TR_IDS=$(grep -r '<C.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Event Information
+        run: |
+          echo "Event '${{ github.event.action }}' received. Passed: ${{ github.event.client_payload.passed }}, failed: '${{ github.event.client_payload.failed }}'"
 
-    - name: Install Playwright Browsers
-      run: npx playwright install chromium
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        run: NEXT_TESTS="${{ env.TR_IDS }}" REPO_OWNER=${{ github.repository_owner }} REPO_NAME=${{ github.repository }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx playwright test -g "${{ env.TR_IDS }}"
 
-    - name: Run Playwright tests
-      run: npx playwright test -g "${{ env.TR_IDS }}"
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

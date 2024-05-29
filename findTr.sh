@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Capture the grep output
-output=$(grep -r '<.*>' ./tests/ | sed 's/.*<//; s/>.*//')
+output=$(grep -r '<C.*>' ./tests/ | sed 's/.*<//; s/>.*//')
 
 # Split the output into lines (considering odd number of lines)
 lines=( $(echo "$output" | tr '\n' ' ') )

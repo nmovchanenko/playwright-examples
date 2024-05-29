@@ -33,8 +33,13 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'dispatcher',
+      testMatch: /after.spec/
+    },
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      teardown: 'dispatcher'
     },
 
     /* Test against mobile viewports. */
