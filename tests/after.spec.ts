@@ -35,8 +35,9 @@ test('repo dispatch', async ({ request }) => {
         data: {
             event_type: "RunMonolithTests/next",
             client_payload: {
-                current: testsToRunNext.join('|'),
-                next: otherTestsToRun.join('|')
+                nextTests: testsToRunNext.join('|'),
+                leftTests: otherTestsToRun.join('|'),
+                stop: !!testsToRunNext.length
             }
         }
     };
