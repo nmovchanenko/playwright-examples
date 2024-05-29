@@ -37,7 +37,7 @@ test('repo dispatch', async ({ request }) => {
             client_payload: {
                 nextTests: testsToRunNext.join('|'),
                 leftTests: otherTestsToRun.join('|'),
-                stop: !!testsToRunNext.length
+                stop: testsToRunNext.length === 0
             }
         }
     };
