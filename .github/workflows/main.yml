@@ -48,12 +48,12 @@ jobs:
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
-          echo "Next tests: '${{ github.event.client_payload.nextTests }}', Left tests: '${{ github.event.client_payload.leftTests }}', Need to stop: '${{ github.event.client_payload.stop }}'"
-          echo "NEXT_TESTS='${{ github.event.client_payload.nextTests }}'" >> $GITHUB_ENV
-          echo "LEFT_TESTS='${{ github.event.client_payload.leftTests }}'" >> $GITHUB_ENV
-          echo "STOP= '${{ github.event.client_payload.stop }}'" >> $GITHUB_ENV
+          echo "Next tests: ${{ github.event.client_payload.nextTests }}, Left tests: ${{ github.event.client_payload.leftTests }}, Need to stop: ${{ github.event.client_payload.stop }}"
+          echo "NEXT_TESTS=${{ github.event.client_payload.nextTests }}" >> $GITHUB_ENV
+          echo "LEFT_TESTS=${{ github.event.client_payload.leftTests }}" >> $GITHUB_ENV
+          echo "STOP=${{ github.event.client_payload.stop }}" >> $GITHUB_ENV
 
-      - name: Echo Env
+      - name: Echo Env if next tests not empty
         if: ${{ env.NEXT_TESTS }}
         run: |
           echo "${{ env.NEXT_TESTS }}"
@@ -73,13 +73,13 @@ jobs:
       - name: Run Playwright tests
         if: ${{ env.NEXT_TESTS }}
         run: |
-          MAX_PARALLEL="${{ env.MAX_PARALLEL }}"
-          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
-          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
+          MAX_PARALLEL=${{ env.MAX_PARALLEL }}
+          NEXT_TESTS=${{ env.NEXT_TESTS }} \
+          LEFT_TESTS=${{ env.LEFT_TESTS }} \
           REPO_OWNER=${{ github.repository_owner }} \
           REPO_NAME=${{ github.repository }} \
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-          npx playwright test -g "${{ env.NEXT_TESTS }}"
+          npx playwright test -g ${{ env.NEXT_TESTS }}
 
       - uses: actions/upload-artifact@v4
         if: always()
