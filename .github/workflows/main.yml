@@ -35,8 +35,8 @@ jobs:
 
 
   run_playwright:
-    needs: setup
     runs-on: ubuntu-latest
+    needs: setup
     if: ${{ env.STOP != 'true' }}
     steps:
       - uses: actions/checkout@v4
