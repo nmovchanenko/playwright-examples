@@ -21,28 +21,20 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          echo "NEXT_TESTS=$(grep -r '<U.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_OUTPUT
-          echo "CURRENT_TESTS=A0001|A0002" >> $GITHUB_OUTPUT
+          echo "NEXT_TESTS=$(grep -r '<U.*>' ./tests/ | sed 's/.*<//; s/>.*//' | tr '\n' '|')X0000" >> $GITHUB_ENV
+          echo "CURRENT_TESTS=A0001|A0002" >> $GITHUB_ENV
 
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
           echo "Event '${{ github.event.action }}' received. CURRENT: ${{ github.event.client_payload.current }}, NEXT: '${{ github.event.client_payload.next }}'"
-          echo "STOP=true" >> $GITHUB_OUTPUT
+          echo "STOP=true" >> $GITHUB_ENV
 
-  run_playwright:
-    runs-on: ubuntu-latest
-    needs: setup
-    if: needs.setup.outputs.STOP != 'true'
-    steps:
       - name: Echo Env
         run: |
-          echo "${{needs.setup.outputs}}"
-          echo "${{needs.setup.outputs.NEXT_TESTS}}"
-          echo "${{needs.setup.outputs.CURRENT_TESTS}}"
-          echo "${{needs.setup.outputs.STOP}}"
-
-      - uses: actions/checkout@v4
+          echo "${{ env.NEXT_TESTS }}"
+          echo "${{ env.CURRENT_TESTS }}"
+          echo "${{ env.STOP }}"
 
       - uses: actions/setup-node@v4
         with:
@@ -56,12 +48,12 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          CURRENT_TESTS="${{ needs.setup.outputs.CURRENT_TESTS }}" \
-          NEXT_TESTS="${{ needs.setup.outputs.NEXT_TESTS }}" \
+          CURRENT_TESTS="${{ env.CURRENT_TESTS }}" \
+          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
           REPO_OWNER=${{ github.repository_owner }} \
           REPO_NAME=${{ github.repository }} \
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-          npx playwright test -g "${{ needs.setup.outputs.CURRENT_TESTS }}"
+          npx playwright test -g "${{ env.CURRENT_TESTS }}"
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -69,3 +61,4 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+

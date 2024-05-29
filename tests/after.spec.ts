@@ -14,6 +14,19 @@ test('repo dispatch', async ({ request }) => {
     console.log('next tests to run:');
     console.log(NEXT_TESTS);
 
+    const limit = 3;
+
+    const testsToRunNext = [];
+    const otherTestsToRun = [];
+
+    NEXT_TESTS.split('|').forEach((testId, index) => {
+        if (index < limit) {
+            testsToRunNext.push(testId);
+        } else {
+            otherTestsToRun.push(testId);
+        }
+    })
+
     let payload = {
         headers: {
             Authorization: `Bearer ${GITHUB_TOKEN}`,
@@ -22,8 +35,8 @@ test('repo dispatch', async ({ request }) => {
         data: {
             event_type: "RunMonolithTests/next",
             client_payload: {
-                current: 9,
-                next: `${NEXT_TESTS}`
+                current: testsToRunNext.join('|'),
+                next: otherTestsToRun.join('|')
             }
         }
     };
