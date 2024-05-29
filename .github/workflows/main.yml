@@ -41,7 +41,7 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          echo "LEFT_TESTS=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|')" >> $GITHUB_ENV
+          echo "LEFT_TESTS=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')" >> $GITHUB_ENV
           echo "NEXT_TESTS=A0001|A0002" >> $GITHUB_ENV
 
       - name: Event Information
