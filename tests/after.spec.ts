@@ -52,7 +52,7 @@ test('repo dispatch', async ({ request }) => {
 
     console.log(`Dispatching ${dispatchUrl} with payload`, JSON.stringify(payload, null, 2));
 
-    // const res = await request.post(dispatchUrl, payload);
-    //
-    // return res.status;
+    const res = await request.post(dispatchUrl, payload);
+
+    return res.status;
 });
