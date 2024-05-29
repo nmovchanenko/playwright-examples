@@ -48,10 +48,10 @@ jobs:
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
-          echo "Next tests: ${{ github.event.client_payload.nextTests }}, Left tests: '${{ github.event.client_payload.leftTests }}', Need to stop: '${{ github.event.client_payload.stop }}'"
-          echo "NEXT_TESTS=${{ github.event.client_payload.nextTests }}" >> $GITHUB_ENV
-          echo "LEFT_TESTS=${{ github.event.client_payload.leftTests }}" >> $GITHUB_ENV
-          echo "STOP= ${{ github.event.client_payload.stop }}" >> $GITHUB_ENV
+          echo "Next tests: '${{ github.event.client_payload.nextTests }}', Left tests: '${{ github.event.client_payload.leftTests }}', Need to stop: '${{ github.event.client_payload.stop }}'"
+          echo "NEXT_TESTS='${{ github.event.client_payload.nextTests }}'" >> $GITHUB_ENV
+          echo "LEFT_TESTS='${{ github.event.client_payload.leftTests }}'" >> $GITHUB_ENV
+          echo "STOP= '${{ github.event.client_payload.stop }}'" >> $GITHUB_ENV
 
       - name: Echo Env
         if: ${{ env.NEXT_TESTS }}
