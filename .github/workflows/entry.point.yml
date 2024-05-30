@@ -42,8 +42,9 @@ jobs:
         shell: bash
         run: |
           echo "TEST_LIST=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')" >> $GITHUB_ENV
+          echo "${{ env.TEST_LIST }}"
           
-          IFS='|' read -r -a elements <<< "${{ env.TEST_LIST }}"
+          IFS='|' read -r -a elements <<< ${{ env.TEST_LIST }}
           
           first_four="${elements[0]}"
           
