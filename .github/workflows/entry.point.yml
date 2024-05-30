@@ -86,6 +86,13 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      - name: Echo Env if next tests not empty
+        run: |
+          echo "${{ env.NEXT_TESTS }}"
+          echo "${{ env.LEFT_TESTS }}"
+          echo "${{ env.TEST_TAG }}"
+          echo "${{ env.STOP }}"
+
       - uses: actions/setup-node@v4
         with:
           node-version: 18
