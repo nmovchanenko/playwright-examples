@@ -41,26 +41,25 @@ jobs:
         shell: bash
         run: |
           testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
-  
+          
+          max=${{ env.MAX_PARALLEL }}
+
           IFS='|' read -r -a elements <<< "$testList"
           
-          first_four="${elements[0]}"
+          next="${elements[0]}"
           
-          for ((i=1; i<4; i++)); do
-            first_four="$first_four|${elements[i]}"
+          for ((i=1; i<max; i++)); do
+          next="$next|${elements[i]}"
           done
           
-          remaining_elements="${elements[4]}"
+          remaining="${elements[max]}"
           
-          for ((i=5; i<${#elements[@]}; i++)); do
-            remaining_elements="$remaining_elements|${elements[i]}"
+          for ((i=max+1; i<${#elements[@]}; i++)); do
+          remaining="$remaining|${elements[i]}"
           done
           
-          first_four=$(echo "$first_four" | sed 's/.$//')
-          remaining_elements=$(echo "$remaining_elements" | sed 's/.$//')
-          
-          echo "NEXT_TESTS=$first_four" >> $GITHUB_ENV
-          echo "LEFT_TESTS=$remaining_elements" >> $GITHUB_ENV
+          echo "NEXT_TESTS=$next" >> $GITHUB_ENV
+          echo "LEFT_TESTS=$remaining" >> $GITHUB_ENV
 
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
