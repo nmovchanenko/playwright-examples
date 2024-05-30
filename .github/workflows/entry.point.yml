@@ -25,7 +25,6 @@ on:
 env:
   MAX_PARALLEL: ${{ inputs.max_parallel}}
   TEST_TAG: ${{ inputs.test_tag }}
-  NEXT_TESTS: ""
 
 jobs:
   setup:
@@ -62,9 +61,6 @@ jobs:
           
           echo "NEXT_TESTS=$first_four" >> $GITHUB_ENV
           echo "LEFT_TESTS=$remaining_elements" >> $GITHUB_ENV
-          
-          echo "NEXT_TESTS=$first_four" >> $GITHUB_OUTPUT
-          echo "LEFT_TESTS=$remaining_elements" >> $GITHUB_OUTPUT
 
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
@@ -84,35 +80,16 @@ jobs:
           echo "${{ env.TEST_TAG }}"
           echo "${{ env.STOP }}"
 
-
-
-  runTests:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Echo Env if next tests not empty
-        run: |
-          echo "env Next tests:"
-          echo "${{ env.NEXT_TESTS }}"
-          
-          echo "output next tests:"
-          echo "${{ needs.setup.outputs.NEXT_TESTS }}"
-
       - uses: actions/setup-node@v4
         with:
           node-version: 18
 
       - name: Install dependencies
         if: ${{ env.NEXT_TESTS }}
-        run: npm ci
-
-      - name: Install Playwright Browsers
-        if: ${{ env.NEXT_TESTS }}
-        run: npx playwright install chromium
-
-      - name: Run Playwright tests
-        if: ${{ env.NEXT_TESTS }}
         run: |
+          npm ci
+          npx playwright install chromium
+          
           TEST_TAG="${{ env.TEST_TAG }}" \
           MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
           NEXT_TESTS="${{ env.NEXT_TESTS }}" \
@@ -121,4 +98,3 @@ jobs:
           REPO_NAME=${{ github.repository }} \
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
           npx playwright test -g "${{ env.NEXT_TESTS }}"
-
