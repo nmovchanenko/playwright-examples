@@ -78,6 +78,13 @@ jobs:
           echo "${{ env.LEFT_TESTS }}"
           echo "${{ env.TEST_TAG }}"
           echo "${{ env.STOP }}"
+          echo "dispatchParams={
+            \"minPassRate\": \"100\",
+            \"type\": \"PromoteToStaging/${{ env.SERVICE }}\",
+            \"version\": \"{\\\"services\\\":\\\"${{ env.SERVICE }}\\\"}\",
+            \"repo\": \"theguarantors/tg-fluxcd\" }" >> $GITHUB_ENV
+          
+          echo "${{ env.dispatchParams }}"
 
       - uses: actions/setup-node@v4
         with:
