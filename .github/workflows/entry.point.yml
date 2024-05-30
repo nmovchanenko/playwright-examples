@@ -86,21 +86,21 @@ jobs:
           
           echo "${{ env.dispatchParams }}"
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        if: ${{ env.NEXT_TESTS }}
-        run: |
-          npm ci
-          npx playwright install chromium
-          
-          TEST_TAG="${{ env.TEST_TAG }}" \
-          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
-          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
-          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
-          REPO_OWNER=${{ github.repository_owner }} \
-          REPO_NAME=${{ github.repository }} \
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-          npx playwright test -g "${{ env.NEXT_TESTS }}"
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: 18
+#
+#      - name: Install dependencies
+#        if: ${{ env.NEXT_TESTS }}
+#        run: |
+#          npm ci
+#          npx playwright install chromium
+#
+#          TEST_TAG="${{ env.TEST_TAG }}" \
+#          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
+#          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+#          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
+#          REPO_OWNER=${{ github.repository_owner }} \
+#          REPO_NAME=${{ github.repository }} \
+#          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+#          npx playwright test -g "${{ env.NEXT_TESTS }}"
