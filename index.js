@@ -32,7 +32,8 @@ if (testsToRunNext.length) {
     let payload = {
         headers: {
             Authorization: `Bearer ${GITHUB_TOKEN}`,
-            Accept: "application/vnd.github.v3+json"
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28"
         },
         data: {
             event_type: "RunMonolithTests/next",
