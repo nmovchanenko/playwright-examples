@@ -25,6 +25,7 @@ on:
 env:
   MAX_PARALLEL: ${{ inputs.max_parallel}}
   TEST_TAG: ${{ inputs.test_tag }}
+  NEXT_TESTS: ""
 
 jobs:
   setup:
