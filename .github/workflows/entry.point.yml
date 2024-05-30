@@ -41,10 +41,8 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          echo "TEST_LIST=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')" >> $GITHUB_ENV
-          
           testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
-          
+  
           IFS='|' read -r -a elements <<< "$testList"
           
           first_four="${elements[0]}"
@@ -59,8 +57,11 @@ jobs:
             remaining_elements="$remaining_elements|${elements[i]}"
           done
           
-          echo "NEXT_TESTS=$first_four"
-          echo "LEFT_TESTS=$remaining_elements"
+          first_four=$(echo "$first_four" | sed 's/.$//')
+          remaining_elements=$(echo "$remaining_elements" | sed 's/.$//')
+          
+          echo "NEXT_TESTS=$first_four" >> $GITHUB_ENV
+          echo "LEFT_TESTS=$remaining_elements" >> $GITHUB_ENV
 
       - uses: actions/setup-node@v4
         with:
