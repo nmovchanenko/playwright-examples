@@ -33,7 +33,6 @@ jobs:
     steps:
       - name: Print
         run: env | sort
-
       - uses: actions/checkout@v4
 
       - name: Find test rail ids
@@ -63,21 +62,6 @@ jobs:
           echo "NEXT_TESTS=$first_four" >> $GITHUB_ENV
           echo "LEFT_TESTS=$remaining_elements" >> $GITHUB_ENV
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-#
-#      - name: Run Entry Point
-#        run: |
-#          TEST_TAG="${{ env.TEST_TAG }}" \
-#          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
-#          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
-#          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
-#          REPO_OWNER=${{ github.repository_owner }} \
-#          REPO_NAME=${{ github.repository }} \
-#          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-#          node ./index.js
-#
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
         run: |
@@ -95,24 +79,34 @@ jobs:
           echo "${{ env.LEFT_TESTS }}"
           echo "${{ env.TEST_TAG }}"
           echo "${{ env.STOP }}"
-#
-#      - name: Install dependencies
-#        if: ${{ env.NEXT_TESTS }}
-#        run: npm ci
-#
-#      - name: Install Playwright Browsers
-#        if: ${{ env.NEXT_TESTS }}
-#        run: npx playwright install chromium
-#
-#      - name: Run Playwright tests
-#        if: ${{ env.NEXT_TESTS }}
-#        run: |
-#          TEST_TAG="${{ env.TEST_TAG }}" \
-#          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
-#          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
-#          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
-#          REPO_OWNER=${{ github.repository_owner }} \
-#          REPO_NAME=${{ github.repository }} \
-#          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-#          npx playwright test -g "${{ env.NEXT_TESTS }}"
+
+
+
+  runTests:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        if: ${{ env.NEXT_TESTS }}
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        if: ${{ env.NEXT_TESTS }}
+        run: npx playwright install chromium
+
+      - name: Run Playwright tests
+        if: ${{ env.NEXT_TESTS }}
+        run: |
+          TEST_TAG="${{ env.TEST_TAG }}" \
+          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
+          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
+          REPO_OWNER=${{ github.repository_owner }} \
+          REPO_NAME=${{ github.repository }} \
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          npx playwright test -g "${{ env.NEXT_TESTS }}"
 
