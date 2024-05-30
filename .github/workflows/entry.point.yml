@@ -78,13 +78,11 @@ jobs:
           echo "${{ env.LEFT_TESTS }}"
           echo "${{ env.TEST_TAG }}"
           echo "${{ env.STOP }}"
-          echo "dispatchParams={
-            \"minPassRate\": \"100\",
-            \"type\": \"PromoteToStaging/${{ env.SERVICE }}\",
-            \"version\": \"{\\\"services\\\":\\\"${{ env.SERVICE }}\\\"}\",
-            \"repo\": \"theguarantors/tg-fluxcd\" }" >> $GITHUB_ENV
           
-          echo "${{ env.dispatchParams }}"
+          echo '{"foo": "Foo", "bar": "bar"}' | jq -r .  > custom_object.json 
+          echo "CUSTOM_OBJECT=$(cat custom_object.json)" >> $GITHUB_ENV
+        
+          echo "${{ env.CUSTOM_OBJECT }}"
 
 #      - uses: actions/setup-node@v4
 #        with:
