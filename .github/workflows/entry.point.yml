@@ -79,8 +79,7 @@ jobs:
           echo "${{ env.TEST_TAG }}"
           echo "${{ env.STOP }}"
           
-          echo '{"foo": "Foo", "bar": "bar"}' | jq -r .  > custom_object.json 
-          echo "CUSTOM_OBJECT=$(cat custom_object.json)" >> $GITHUB_ENV
+          echo "CUSTOM_OBJECT='{"foo": "Foo", "bar": "bar"}'" >> $GITHUB_ENV
         
           echo "${{ env.CUSTOM_OBJECT }}"
 
