@@ -42,29 +42,27 @@ jobs:
         shell: bash
         run: |
           echo "TEST_LIST=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')" >> $GITHUB_ENV
-
-      - name: Split the output
-        run: |
+          
           IFS='|' read -r -a elements <<< "${{ env.TEST_LIST }}"
-  
+          
           first_four="${elements[0]}"
           
           for ((i=1; i<4; i++)); do
-          first_four="$first_four|${elements[i]}"
+            first_four="$first_four|${elements[i]}"
           done
           
           remaining_elements="${elements[4]}"
           
           for ((i=5; i<${#elements[@]}; i++)); do
-          remaining_elements="$remaining_elements|${elements[i]}"
+            remaining_elements="$remaining_elements|${elements[i]}"
           done
           
-          echo "FIRST_FOUR_ELEMENTS=$first_four"
-          echo "REMAINING_ELEMENTS=$remaining_elements"
+          echo "NEXT_TESTS=$first_four" >> $GITHUB_ENV
+          echo "LEFT_TESTS=$remaining_elements" >> $GITHUB_ENV
 
-#      - uses: actions/setup-node@v4
-#        with:
-#          node-version: 18
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
 #
 #      - name: Run Entry Point
 #        run: |
@@ -77,23 +75,23 @@ jobs:
 #          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
 #          node ./index.js
 #
-#      - name: Event Information
-#        if: ${{ github.event_name == 'repository_dispatch'}}
-#        run: |
-#          echo "Next tests: ${{ github.event.client_payload.nextTests }}, Left tests: ${{ github.event.client_payload.leftTests }}, Need to stop: ${{ github.event.client_payload.stop }}"
-#          echo "NEXT_TESTS=${{ github.event.client_payload.nextTests }}" >> $GITHUB_ENV
-#          echo "LEFT_TESTS=${{ github.event.client_payload.leftTests }}" >> $GITHUB_ENV
-#          echo "TEST_TAG=${{ github.event.client_payload.testTag }}" >> $GITHUB_ENV
-#          echo "MAX_PARALLEL=${{ github.event.client_payload.maxParallel }}" >> $GITHUB_ENV
-#          echo "STOP=${{ github.event.client_payload.stop }}" >> $GITHUB_ENV
+      - name: Event Information
+        if: ${{ github.event_name == 'repository_dispatch'}}
+        run: |
+          echo "Next tests: ${{ github.event.client_payload.nextTests }}, Left tests: ${{ github.event.client_payload.leftTests }}, Need to stop: ${{ github.event.client_payload.stop }}"
+          echo "NEXT_TESTS=${{ github.event.client_payload.nextTests }}" >> $GITHUB_ENV
+          echo "LEFT_TESTS=${{ github.event.client_payload.leftTests }}" >> $GITHUB_ENV
+          echo "TEST_TAG=${{ github.event.client_payload.testTag }}" >> $GITHUB_ENV
+          echo "MAX_PARALLEL=${{ github.event.client_payload.maxParallel }}" >> $GITHUB_ENV
+          echo "STOP=${{ github.event.client_payload.stop }}" >> $GITHUB_ENV
 
-#      - name: Echo Env if next tests not empty
-#        if: ${{ env.NEXT_TESTS }}
-#        run: |
-#          echo "${{ env.NEXT_TESTS }}"
-#          echo "${{ env.LEFT_TESTS }}"
-#          echo "${{ env.TEST_TAG }}"
-#          echo "${{ env.STOP }}"
+      - name: Echo Env if next tests not empty
+        if: ${{ env.NEXT_TESTS }}
+        run: |
+          echo "${{ env.NEXT_TESTS }}"
+          echo "${{ env.LEFT_TESTS }}"
+          echo "${{ env.TEST_TAG }}"
+          echo "${{ env.STOP }}"
 #
 #      - name: Install dependencies
 #        if: ${{ env.NEXT_TESTS }}
