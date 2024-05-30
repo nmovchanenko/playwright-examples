@@ -45,10 +45,7 @@ jobs:
           
           testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
           
-          echo "$testList"
-          echo "${{ env.TEST_LIST }}"
-          
-          IFS='|' read -r -a elements <<< "${{ env.TEST_LIST }}"
+          IFS='|' read -r -a elements <<< "$testList"
           
           first_four="${elements[0]}"
           
@@ -63,7 +60,7 @@ jobs:
           done
           
           echo "NEXT_TESTS=$first_four"
-          echo "LEFT_TESTS=$remaining_elements" >> $GITHUB_ENV
+          echo "LEFT_TESTS=$remaining_elements"
 
       - uses: actions/setup-node@v4
         with:
