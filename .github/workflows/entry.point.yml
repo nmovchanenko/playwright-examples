@@ -17,6 +17,7 @@ on:
         type: choice
         default: "@smoke"
         options:
+          - "@smoke"
           - "@monolith-nightly"
       enable_dispatch:
         description: "Enable repository dispatch?"
