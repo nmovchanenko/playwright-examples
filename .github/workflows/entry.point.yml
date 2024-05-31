@@ -54,6 +54,9 @@ on:
     types:
       - RunMonolithTests/*
 
+env:
+  TEST_TAG: ${{ inputs.test_tag || '@monolith' }}
+
 jobs:
   setup:
     timeout-minutes: 60
@@ -68,7 +71,7 @@ jobs:
         run: |
           echo "ENABLE_DISPATCH=true" >> $GITHUB_ENV
           echo "ENVIRONMENT_NAME=${{ inputs.environment_name || 'integration' }}" >> $GITHUB_ENV
-          echo "TEST_TAG=${{ inputs.test_tag || '@monolith' }}" >> $GITHUB_ENV
+#          echo "TEST_TAG=${{ inputs.test_tag || '@monolith' }}" >> $GITHUB_ENV
           echo "MAX_PARALLEL=${{ inputs.max_parallel || 15 }}" >> $GITHUB_ENV
           echo "MIN_PASS_RATE=${{ inputs.min_pass_rate || 50 }}" >> $GITHUB_ENV
           echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
