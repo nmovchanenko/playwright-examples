@@ -78,7 +78,10 @@ jobs:
           echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
           echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
           echo "SERVICE_VERSION=e2e" >> $GITHUB_ENV
-
+      
+          one=${{ inputs.max_parallel }} || 15
+          two="${{ env.MAX_PARALLEL }}"
+      
           max=${{ env.MAX_PARALLEL }}
           testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
 
