@@ -28,11 +28,11 @@ on:
         required: true
         type: boolean
         default: true
-      max_parallel:
-        description: "Max parallel"
-        required: true
-        type: string
-        default: '15'
+#      max_parallel:
+#        description: "Max parallel"
+#        required: true
+#        type: string
+#        default: '15'
       min_pass_rate:
         description: "Min pass rate to deploy"
         required: true
