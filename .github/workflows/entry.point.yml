@@ -15,7 +15,7 @@ on:
         description: "Test tags to run"
         required: true
         type: choice
-        default: "@deployment-criteria"
+        default: "@smoke"
         options:
           - "@deployment-criteria"
           - "@monolith-nightly"
