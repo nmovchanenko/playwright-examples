@@ -55,7 +55,7 @@ on:
       - RunMonolithTests/*
 
 env:
-  TEST_TAG: ${{ inputs.test_tag || '@monolith' }}
+  environment_name: ${{ inputs.environment_name || 'integration' }}
 
 jobs:
   setup:
