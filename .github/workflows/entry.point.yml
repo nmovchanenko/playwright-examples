@@ -3,28 +3,60 @@ name: Run Entry Point
 on:
   workflow_dispatch:
     inputs:
-      test_tag:
-        description: "Test scope to run"
+      environment_name:
+        description: "Select Environment"
         required: true
         type: choice
-        default: "@smoke"
+        default: "integration"
         options:
-          - "@smoke"
-          - "@regression"
-
+          - "staging"
+          - "integration"
+      test_tag:
+        description: "Test tags to run"
+        required: true
+        type: choice
+        default: "@deployment-criteria"
+        options:
+          - "@deployment-criteria"
+          - "@monolith-nightly"
+          - "@monolith-nightly-group-1"
+          - "@monolith-nightly-group-2"
+          - "@monolith-nightly-group-3"
+          - "@monolith-nightly-quoteservice"
+      enable_dispatch:
+        description: "Enable repository dispatch?"
+        required: true
+        type: boolean
+        default: true
       max_parallel:
-        description: "Max parallel tests to run"
+        description: "Max parallel"
         required: true
         type: string
-        default: "5"
+        default: '15'
+      min_pass_rate:
+        description: "Min pass rate to deploy"
+        required: true
+        type: number
+        default: 80
+      event_type:
+        description: "Event type to dispatch"
+        required: true
+        type: string
+        default: "PromoteToStaging"
+      service_name:
+        description: "Service name"
+        required: true
+        type: string
+        default: "monolith"
+      service_version:
+        description: "Service version"
+        required: true
+        type: string
+        default: "V1"
 
   repository_dispatch:
     types:
       - RunMonolithTests/*
-
-env:
-  MAX_PARALLEL: ${{ inputs.max_parallel}}
-  TEST_TAG: ${{ inputs.test_tag }}
 
 jobs:
   setup:
@@ -38,9 +70,17 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
-          
+          echo "ENABLE_DISPATCH=true" >> $GITHUB_ENV
+          echo "ENVIRONMENT_NAME=${{ inputs.environment_name || 'integration' }}" >> $GITHUB_ENV
+          echo "TEST_TAG=${{ inputs.test_tag || '@monolith' }}" >> $GITHUB_ENV
+          echo "MAX_PARALLEL=${{ inputs.max_parallel || 15 }}" >> $GITHUB_ENV
+          echo "MIN_PASS_RATE=${{ inputs.min_pass_rate || 50 }}" >> $GITHUB_ENV
+          echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
+          echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
+          echo "SERVICE_VERSION=e2e" >> $GITHUB_ENV
+
           max=${{ env.MAX_PARALLEL }}
+          testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
 
           IFS='|' read -r -a elements <<< "$testList"
           
@@ -56,6 +96,7 @@ jobs:
           remaining="$remaining|${elements[i]}"
           done
           
+          # Set next and remaining tests env variable
           echo "NEXT_TESTS=$next" >> $GITHUB_ENV
           echo "LEFT_TESTS=$remaining" >> $GITHUB_ENV
 
