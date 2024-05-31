@@ -79,7 +79,7 @@ jobs:
           echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
           echo "SERVICE_VERSION=e2e" >> $GITHUB_ENV
 
-          max=${{ inputs.max_parallel || 15 }}
+          max=${{ env.MAX_PARALLEL }}
           testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
 
           IFS='|' read -r -a elements <<< "$testList"
