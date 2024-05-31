@@ -113,7 +113,7 @@ jobs:
           echo "STOP=${{ github.event.client_payload.stop }}" >> $GITHUB_ENV
 
       - name: Invoke AWS Step Function with inputs
-        uses: ./.github/workflows/actions/run-tests.yml
+        uses: ./.github/actions/run-tests.yml
         with:
           reportTitle: "Monolith Deployment Criteria Test Run"
           runTokenPrefix: "monolith-deployment-criteria-test"
