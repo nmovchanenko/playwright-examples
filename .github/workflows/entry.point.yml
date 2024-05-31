@@ -57,7 +57,7 @@ on:
 permissions: write-all
 
 env:
-  environment_name: ${{ inputs.environment_name || 'integration' }}
+  TEST_TAG: ${{ inputs.test_tag || '@monolith' }}
 
 jobs:
   setup:
