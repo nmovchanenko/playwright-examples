@@ -1,0 +1,107 @@
+name: AWS Lambda Test Execute
+description: "Executes iQuality test cases in AWS Lambda"
+
+inputs:
+  reportTitle:
+    required: true
+    description: "Title of the report to be generated, e.g. Monolith Nightly Test Run"
+
+  runTokenPrefix:
+    required: true
+    description: "Prefix for test run to differentiate between different runs, eg monolith-nightly"
+
+  environment:
+    required: true
+    description: "Environment to run tests against, eg staging, integration"
+
+  testCaseIdentifiers:
+    required: true
+    description: "Test case identifiers to run, eg ['@monolith', '@renters']"
+
+  slackChannel:
+    required: true
+    default: ""
+    description: "Slack channel to send notifications to, eg tech-qa-monolith, '' if no notifications are required"
+
+  createTestRunInTestRail:
+    required: true
+    default: "false"
+    description: "True if test run needs to be created in Test Rail, false otherwise"
+
+  AWS_ROLE_TO_ASSUME:
+    required: true
+    description: "AWS Role to be assumed to trigger tests running in step functions in AWS"
+
+  GH_PACKAGES_TOKEN:
+    required: true
+    description: "GH token used to retrieve internal packages and pull repositories"
+
+  statusAutoinvite:
+    required: false
+    default: ""
+    description: "Application status for autoinvite data generation"
+
+  screeningStatusAutoinvite:
+    required: false
+    default: ""
+    description: "Screening status for autoinvite data generation"
+
+  emailAutoinvite:
+    required: false
+    default: ""
+    description: "Email for autoinvite data generation"
+
+  propertyAutoinvite:
+    required: false
+    default: ""
+    description: "Property for autoinvite data generation"
+
+  dispatchParams:
+    required: false
+    description: "Repository dispatch params"
+    default: "{}"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Set State Machine ARN based on environment
+      id: set-arn
+      shell: bash
+      run: |
+        if [ "${{ inputs.environment }}" = "staging" ] || [ "${{ inputs.environment }}" = "production" ]; then
+          echo "STATE_MACHINE_ARN=qa-generate-report-state-machine" >> $GITHUB_OUTPUT
+        elif [ "${{ inputs.environment }}" = "integration" ]; then
+          echo "STATE_MACHINE_ARN=qa-generate-report-state-machine" >> $GITHUB_OUTPUT
+        else
+          echo "::error::Unknown environment specified"
+          exit 1
+        fi
+
+    - name: Create Run Token
+      shell: bash
+      run: echo "RUN_TOKEN=${{inputs.runTokenPrefix}}-run-$(date '+%d-%m-%Y %H:%M:%S' | sed -e 's/ /-/g')" >> $GITHUB_ENV
+
+    - name: Run Playwright Tests In ${{inputs.environment}}
+      shell: bash
+      run: |
+        echo "******Running tests in ${{inputs.environment}}******"
+        export ENVIRONMENT="${{inputs.environment}}"
+
+        echo '{
+              "runId": "${{env.RUN_TOKEN}}",
+              "action": "getTestList",
+              "args": {
+                "environment": "${{inputs.environment}}",
+                "limitTests": ${{inputs.testCaseIdentifiers}},
+                "slackChannel": "${{inputs.slackChannel}}",
+                "createTestRunInTestRail": ${{inputs.createTestRunInTestRail}},
+                "reportTitle": "${{inputs.reportTitle}}",
+                "statusAutoinvite": "${{inputs.statusAutoinvite}}",
+                "screeningStatusAutoinvite": "${{inputs.screeningStatusAutoinvite}}",
+                "emailAutoinvite": "${{inputs.emailAutoinvite}}",
+                "propertyAutoinvite": "${{inputs.propertyAutoinvite}}",
+                "dispatchParams": ${{inputs.dispatchParams}}
+              }
+            }'
