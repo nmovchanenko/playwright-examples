@@ -81,8 +81,8 @@ jobs:
           echo "NEXT_TESTS=$next" >> $GITHUB_ENV
           echo "LEFT_TESTS=$remaining" >> $GITHUB_ENV
 
-          max=${{ inputs.max_parallel || 15 }}
-          testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ inputs.test_tag || '@monolith' }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
+          max=${{ env.MAX_PARALLEL }}
+          testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
 
           IFS='|' read -r -a elements <<< "$testList"
           
