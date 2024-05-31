@@ -28,11 +28,11 @@ on:
         required: true
         type: boolean
         default: true
-#      max_parallel:
-#        description: "Max parallel"
-#        required: true
-#        type: string
-#        default: '15'
+      max_parallel:
+        description: "Max parallel"
+        required: true
+        type: string
+        default: '15'
       min_pass_rate:
         description: "Min pass rate to deploy"
         required: true
@@ -89,14 +89,14 @@ jobs:
 
           echo "ENABLE_DISPATCH=true" >> $GITHUB_ENV
           echo "ENVIRONMENT_NAME=${{ inputs.environment_name || 'integration' }}" >> $GITHUB_ENV
-          echo "TEST_TAG=${{ inputs.test_tag || '@monolith' }}" >> $GITHUB_ENV
-          echo "MAX_PARALLEL=${{ inputs.max_parallel || 15 }}" >> $GITHUB_ENV
-          echo "MIN_PASS_RATE=${{ inputs.min_pass_rate || 50 }}" >> $GITHUB_ENV
-          echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
-          echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
-          echo "SERVICE_VERSION=e2e" >> $GITHUB_ENV
-          echo "NEXT_TESTS=$next" >> $GITHUB_ENV
-          echo "LEFT_TESTS=$remaining" >> $GITHUB_ENV
+#          echo "TEST_TAG=${{ inputs.test_tag || '@monolith' }}" >> $GITHUB_ENV
+#          echo "MAX_PARALLEL=${{ inputs.max_parallel || 15 }}" >> $GITHUB_ENV
+#          echo "MIN_PASS_RATE=${{ inputs.min_pass_rate || 50 }}" >> $GITHUB_ENV
+#          echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
+#          echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
+#          echo "SERVICE_VERSION=e2e" >> $GITHUB_ENV
+#          echo "NEXT_TESTS=$next" >> $GITHUB_ENV
+#          echo "LEFT_TESTS=$remaining" >> $GITHUB_ENV
 
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
