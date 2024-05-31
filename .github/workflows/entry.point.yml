@@ -31,8 +31,6 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - name: Print
-        run: env | sort
       - uses: actions/checkout@v4
 
       - name: Find test rail ids
@@ -71,15 +69,8 @@ jobs:
           echo "MAX_PARALLEL=${{ github.event.client_payload.maxParallel }}" >> $GITHUB_ENV
           echo "STOP=${{ github.event.client_payload.stop }}" >> $GITHUB_ENV
 
-      - name: Echo Env if next tests not empty
-        if: ${{ env.NEXT_TESTS }}
-        run: |
-          echo "${{ env.NEXT_TESTS }}"
-          echo "${{ env.LEFT_TESTS }}"
-          echo "${{ env.TEST_TAG }}"
-          echo "${{ env.STOP }}"
-          
-          echo "testCaseIdentifiers: '["${{ env.NEXT_TESTS }}"]'"
+      - name: Print
+        run: env | sort
 
       - uses: actions/setup-node@v4
         with:
