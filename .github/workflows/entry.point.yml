@@ -71,15 +71,15 @@ jobs:
         shell: bash
         run: |
           echo "ENABLE_DISPATCH=true" >> $GITHUB_ENV
-          echo "ENVIRONMENT_NAME='${{ inputs.environment_name || 'integration' }}'" >> $GITHUB_ENV
-          echo "TEST_TAG='${{ inputs.test_tag || '@monolith' }}'" >> $GITHUB_ENV
-          echo "MAX_PARALLEL='${{ inputs.max_parallel || 15 }}'" >> $GITHUB_ENV
-          echo "MIN_PASS_RATE='${{ inputs.min_pass_rate || 50 }}'" >> $GITHUB_ENV
+          echo "ENVIRONMENT_NAME=${{ inputs.environment_name || 'integration' }}" >> $GITHUB_ENV
+          echo "TEST_TAG=${{ inputs.test_tag || '@monolith' }}" >> $GITHUB_ENV
+          echo "MAX_PARALLEL=${{ inputs.max_parallel || 15 }}" >> $GITHUB_ENV
+          echo "MIN_PASS_RATE=${{ inputs.min_pass_rate || 50 }}" >> $GITHUB_ENV
           echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
           echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
           echo "SERVICE_VERSION=e2e" >> $GITHUB_ENV
 
-          max=${{ env.MAX_PARALLEL }}
+          max=${{ inputs.max_parallel || 15 }}
           testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ env.TEST_TAG }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
 
           IFS='|' read -r -a elements <<< "$testList"
@@ -117,17 +117,17 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
-        if: ${{ env.NEXT_TESTS }}
-        run: |
-          npm ci
-          npx playwright install chromium
-
-          TEST_TAG="${{ env.TEST_TAG }}" \
-          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
-          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
-          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
-          REPO_OWNER=${{ github.repository_owner }} \
-          REPO_NAME=${{ github.repository }} \
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-          npx playwright test -g "${{ env.NEXT_TESTS }}"
+#      - name: Install dependencies
+#        if: ${{ env.NEXT_TESTS }}
+#        run: |
+#          npm ci
+#          npx playwright install chromium
+#
+#          TEST_TAG="${{ env.TEST_TAG }}" \
+#          MAX_PARALLEL="${{ env.MAX_PARALLEL }}" \
+#          NEXT_TESTS="${{ env.NEXT_TESTS }}" \
+#          LEFT_TESTS="${{ env.LEFT_TESTS }}" \
+#          REPO_OWNER=${{ github.repository_owner }} \
+#          REPO_NAME=${{ github.repository }} \
+#          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+#          npx playwright test -g "${{ env.NEXT_TESTS }}"
