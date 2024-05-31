@@ -17,12 +17,7 @@ on:
         type: choice
         default: "@smoke"
         options:
-          - "@deployment-criteria"
           - "@monolith-nightly"
-          - "@monolith-nightly-group-1"
-          - "@monolith-nightly-group-2"
-          - "@monolith-nightly-group-3"
-          - "@monolith-nightly-quoteservice"
       enable_dispatch:
         description: "Enable repository dispatch?"
         required: true
