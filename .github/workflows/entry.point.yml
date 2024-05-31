@@ -78,6 +78,8 @@ jobs:
           echo "${{ env.LEFT_TESTS }}"
           echo "${{ env.TEST_TAG }}"
           echo "${{ env.STOP }}"
+          
+          echo "testCaseIdentifiers: '["${{ env.NEXT_TESTS }}"]'"
 
       - uses: actions/setup-node@v4
         with:
