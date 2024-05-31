@@ -57,7 +57,14 @@ on:
 permissions: write-all
 
 env:
+  ENABLE_DISPATCH: true
   TEST_TAG: ${{ inputs.test_tag || '@monolith' }}
+  MAX_PARALLEL: ${{ inputs.max_parallel || 15 }}
+  ENVIRONMENT_NAME: ${{ inputs.environment_name || 'integration' }}
+  MIN_PASS_RATE: ${{ inputs.min_pass_rate || 50 }}
+  EVENT_TYPE: RunMonolithTests
+  SERVICE_NAME: e2e
+  SERVICE_VERSION: e2e
 
 jobs:
   setup:
@@ -71,16 +78,6 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          echo "ENABLE_DISPATCH=true" >> $GITHUB_ENV
-          echo "ENVIRONMENT_NAME=${{ inputs.environment_name || 'integration' }}" >> $GITHUB_ENV
-          echo "MAX_PARALLEL=${{ inputs.max_parallel || 15 }}" >> $GITHUB_ENV
-          echo "MIN_PASS_RATE=${{ inputs.min_pass_rate || 50 }}" >> $GITHUB_ENV
-          echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
-          echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
-          echo "SERVICE_VERSION=e2e" >> $GITHUB_ENV
-          echo "NEXT_TESTS=$next" >> $GITHUB_ENV
-          echo "LEFT_TESTS=$remaining" >> $GITHUB_ENV
-
           max=${{ env.MAX_PARALLEL }}
           testList=$(grep -r '<U.*>' ./tests/ | grep -E "${{ env.TEST_TAG }}" | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
 
@@ -97,6 +94,9 @@ jobs:
           for ((i=max+1; i<${#elements[@]}; i++)); do
             remaining="$remaining|${elements[i]}"
           done
+          
+          echo "NEXT_TESTS=$next" >> $GITHUB_ENV
+          echo "LEFT_TESTS=$remaining" >> $GITHUB_ENV
 
       - name: Event Information
         if: ${{ github.event_name == 'repository_dispatch'}}
