@@ -70,11 +70,8 @@ jobs:
         id: tr_id
         shell: bash
         run: |
-          MAX_PARALLEL=${{ inputs.max_parallel || 15 }}
-          TEST_TAG=${{ inputs.test_tag || '@monolith' }}
-      
-          max=MAX_PARALLEL
-          testList=$(grep -r '<U.*>' ./tests/ | grep -E '$TEST_TAG' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
+          max=${{ inputs.max_parallel || 15 }}
+          testList=$(grep -r '<U.*>' ./tests/ | grep -E '${{ inputs.test_tag || '@monolith' }}' | sed 's/.*<//; s/>.*//' | tr '\n' '|' | sed 's/.$//')
 
           IFS='|' read -r -a elements <<< "$testList"
           
@@ -89,12 +86,11 @@ jobs:
           for ((i=max+1; i<${#elements[@]}; i++)); do
           remaining="$remaining|${elements[i]}"
           done
-          
-          # Set next and remaining tests env variable
+
           echo "ENABLE_DISPATCH=true" >> $GITHUB_ENV
           echo "ENVIRONMENT_NAME=${{ inputs.environment_name || 'integration' }}" >> $GITHUB_ENV
-          echo "TEST_TAG=TEST_TAG" >> $GITHUB_ENV
-          echo "MAX_PARALLEL=MAX_PARALLEL" >> $GITHUB_ENV
+          echo "TEST_TAG=${{ inputs.test_tag || '@monolith' }}" >> $GITHUB_ENV
+          echo "MAX_PARALLEL=${{ inputs.max_parallel || 15 }}" >> $GITHUB_ENV
           echo "MIN_PASS_RATE=${{ inputs.min_pass_rate || 50 }}" >> $GITHUB_ENV
           echo "EVENT_TYPE=RunMonolithTests" >> $GITHUB_ENV
           echo "SERVICE_NAME=e2e" >> $GITHUB_ENV
