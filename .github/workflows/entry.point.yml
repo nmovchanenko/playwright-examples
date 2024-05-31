@@ -78,13 +78,13 @@ jobs:
           next="${elements[0]}"
           
           for ((i=1; i<max; i++)); do
-          next="$next|${elements[i]}"
+            next="$next|${elements[i]}"
           done
           
           remaining="${elements[max]}"
           
           for ((i=max+1; i<${#elements[@]}; i++)); do
-          remaining="$remaining|${elements[i]}"
+            remaining="$remaining|${elements[i]}"
           done
 
           echo "ENABLE_DISPATCH=true" >> $GITHUB_ENV
