@@ -37,18 +37,19 @@ on:
       event_type:
         description: "Event type to dispatch"
         required: true
-        type: string
-        default: "PromoteToStaging"
+        type: choice
+        default: "RunMonolithTests"
+        options:
+          - "PromoteToStaging"
+          - "RunMonolithTests"
       service_name:
         description: "Service name"
-        required: true
+        required: false
         type: string
-        default: "monolith"
       service_version:
         description: "Service version"
-        required: true
+        required: false
         type: string
-        default: "V1"
 
   repository_dispatch:
     types:
@@ -57,14 +58,14 @@ on:
 permissions: write-all
 
 env:
-  ENABLE_DISPATCH: true
+  ENABLE_DISPATCH: ${{ inputs.event_type || false }}
   TEST_TAG: ${{ inputs.test_tag || '@monolith' }}
   MAX_PARALLEL: ${{ inputs.max_parallel || 15 }}
   ENVIRONMENT_NAME: ${{ inputs.environment_name || 'integration' }}
   MIN_PASS_RATE: ${{ inputs.min_pass_rate || 50 }}
-  EVENT_TYPE: RunMonolithTests
-  SERVICE_NAME: e2e
-  SERVICE_VERSION: e2e
+  EVENT_TYPE:  ${{ inputs.event_type || 'RunMonolithTests' }}
+  SERVICE_NAME:  ${{ inputs.service_name || 'e2e' }}
+  SERVICE_VERSION: ${{ inputs.service_version || 'e2e' }}
 
 jobs:
   setup:
